@@ -322,8 +322,9 @@ public class Graph {
         setZentrum( info);
         return info;
     }
-    public boolean isZusammenhaengend(){
+    public String isZusammenhaengend(){
         int count = 0;
+        String txt = "";
         for (int i = 0; i < getSize(); i++){
             for (int j = 0; j < getSize(); j++){
                 if (getWegmatrix()[i][j]==1){
@@ -332,9 +333,13 @@ public class Graph {
             }
         }
         if (count == getSize() * getSize()){
-            return true;
+            txt="Ja";
+            return txt;
+
+        }else {
+            txt += "Nein";
+            return txt;
         }
-        return false;
     }
     public int komponentenanzahl(){
         int vergleichsArray[] = new int [getSize()];
