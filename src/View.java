@@ -18,6 +18,8 @@ class View extends JFrame
             WegPanel, WegPanelInfo, InfoPanel, InfoPanel1, mainPanel;
     private JLabel radius,durchmesser,extrencitaet,zentrum,bridge,info,
         komponents,komponentsOutput,Zusammenhaenged, Articulation;
+    private JLabel radius1,durchmesser1,extrencitaet1,zentrum1,bridge1,
+            komponents1,komponentsOutput1,Zusammenhaenged1, Articulation1;
     private JPanel panel;
     private int laenge, num;;
     private JButton[][] AdjBtn;
@@ -41,7 +43,6 @@ class View extends JFrame
         setLocationRelativeTo(null);
         setVisible(true);
     }
-
     public int laenge() {
         return laenge = laenge;
     }
@@ -140,32 +141,32 @@ class View extends JFrame
         komponents.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
         komponentsOutput = new JLabel("Komponents: ");
         komponentsOutput.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
-        JLabel Zusammenhengend = new JLabel("Zusammenhengend: ");
-        Zusammenhengend.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
-        JLabel Articulation = new JLabel("Articulation: ");
+        Zusammenhaenged = new JLabel("Zusammenhengend: ");
+        Zusammenhaenged.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
+        Articulation = new JLabel("Articulation: ");
         Articulation.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
-        JLabel Bridge = new JLabel("Brücken: ");
-        Bridge.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
-
-        JLabel radius1 = new JLabel("  " + g.getRadius());
+        bridge = new JLabel("Brücken: ");
+        bridge.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
+        //-----------------------------------------------------
+        radius1 = new JLabel("  " + g.getRadius());
         Font f1 = radius.getFont();
         radius.setFont(f1.deriveFont(f.getStyle() | Font.BOLD));
-        JLabel durchmesser1 = new JLabel("  " + g.getDurchmesser());
+        durchmesser1 = new JLabel("  " + g.getDurchmesser());
         durchmesser.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
-        JLabel extrencitaet1 = new JLabel("  " + g.exzentrizitaet());
+        extrencitaet1 = new JLabel("  " + g.exzentrizitaet());
         extrencitaet.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
-        JLabel zentrum1 = new JLabel("  " + g.getZentrum());
+        zentrum1 = new JLabel("  " + g.getZentrum());
         zentrum.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
-        JLabel Komponents1 = new JLabel("  " + g.komponentenanzahl());
+        komponents1 = new JLabel("  " + g.komponentenanzahl());
         komponents.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
-        JLabel KomponentsOutput1 = new JLabel("  " + g.komponenteAusgeben());
+        komponentsOutput1 = new JLabel("  " + g.komponenteAusgeben());
         komponentsOutput.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
-        JLabel Zusammenhengend1 = new JLabel("  "+g.isZusammenhaengend());
-        Zusammenhengend.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
-        JLabel Articulation1 = new JLabel("  " +g.getApPrint());
+        Zusammenhaenged1 = new JLabel("  "+g.isZusammenhaengend());
+        Zusammenhaenged1.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
+        Articulation1 = new JLabel("  " +g.getApPrint());
         Articulation.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
-        JLabel Bridge1 = new JLabel("  " + g.getBridgePrint());
-        Bridge.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
+        bridge1 = new JLabel("  " + g.getBridgePrint());
+        bridge1.setFont(f.deriveFont(f.getStyle() | Font.BOLD));
 
         // Create Panels
         // Add all Info into Panel Info
@@ -178,16 +179,16 @@ class View extends JFrame
         panel.add(radius1);
         panel.add(zentrum);
         panel.add(zentrum1);
-        panel.add(Bridge);
-        panel.add(Bridge1);
+        panel.add(bridge1);
+        panel.add(bridge1);
         panel.add(Articulation);
         panel.add(Articulation1);
         panel.add(komponents);
-        panel.add(Komponents1);
+        panel.add(komponents1);
         panel.add(komponentsOutput);
-        panel.add(KomponentsOutput1);
-        panel.add(Zusammenhengend);
-        panel.add(Zusammenhengend1);
+        panel.add(komponentsOutput1);
+        panel.add(Zusammenhaenged1);
+        panel.add(Zusammenhaenged1);
 
         // Add Panel of Infos to the Infopanel
         InfoPanel.add(panel, BorderLayout.WEST);
@@ -262,8 +263,6 @@ class View extends JFrame
         }
     }
 
-
-
     public void addDistMatrix() {
         try{
             for (int row = 0; row < laenge; row++) {
@@ -282,7 +281,6 @@ class View extends JFrame
                         DistBtn[row][col].setFont(new Font("Dialog",Font.PLAIN, 17));
                         DistBtn[row][col].setBackground(Color.WHITE);
                         DistPanel.add(DistBtn[row][col]);
-
                     }
                 }
             }
@@ -290,7 +288,6 @@ class View extends JFrame
         {
             e.printStackTrace();
         }
-
     }
     public void addWegMatrix() {
         try{
