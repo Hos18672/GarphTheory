@@ -179,7 +179,7 @@ class View extends JFrame
         panel.add(radius1);
         panel.add(zentrum);
         panel.add(zentrum1);
-        panel.add(bridge1);
+        panel.add(bridge);
         panel.add(bridge1);
         panel.add(Articulation);
         panel.add(Articulation1);
@@ -187,7 +187,7 @@ class View extends JFrame
         panel.add(komponents1);
         panel.add(komponentsOutput);
         panel.add(komponentsOutput1);
-        panel.add(Zusammenhaenged1);
+        panel.add(Zusammenhaenged);
         panel.add(Zusammenhaenged1);
 
         // Add Panel of Infos to the Infopanel
@@ -246,17 +246,13 @@ class View extends JFrame
                             System.out.println("\nBirdge: ");
                             g1.bridge();
                             g1.printGraph();
-
                         });
                         AdjBtn[row][col].setBackground(Color.cyan);
                         AdjPanel.add(AdjBtn[row][col]);
                         //mainPanel.remove(DistPanel);
-
                     }
-
                 }
             }
-;
         }catch (Exception e)
         {
             e.printStackTrace();
