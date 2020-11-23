@@ -6,24 +6,25 @@ import java.util.*;
 
 public class Graph {
     private int size;
-    private int radius, durchmesser =0;
+    private int radius;
+    private int durchmesser =0;
     private String zentrum;
-    public  Integer AdjacencyMatrix2[][];
-    private Integer distanceMatix[][];
-    private Integer wegmatrix[][];
-    private Integer matrixA[][];
-    private int exzentrizitaet[];
-    private int posUnique[];
+    private Integer[][] AdjacencyMatrix2;
+    private Integer[][] distanceMatix;
+    private Integer[][] wegmatrix;
+    private Integer[][] matrixA;
+    private int[] exzentrizitaet;
+    private int[] posUnique;
     private int time = 0;
     private static final int NIL = -1;
     private ArrayList<ArrayList<Integer>> adjListArray = new ArrayList<>();
     private String inputLine = "";
 
-
-    String apPrint = "";
-    String bridgePrint = "";
-    private String filelocation, path = null;
-    JMenuItem newMenuItem = new JMenuItem("New") {public void menuSelectionChanged(boolean isSelected) {
+    private String apPrint = "";
+    private String bridgePrint = "";
+    private String filelocation;
+    private String path = null;
+    private JMenuItem newMenuItem = new JMenuItem("New") {public void menuSelectionChanged(boolean isSelected) {
         super.menuSelectionChanged(isSelected);
 
         if (isArmed()) {
@@ -31,13 +32,17 @@ public class Graph {
             fc.setDialogTitle("select File");
             fc.showOpenDialog(null);
             File file = fc.getSelectedFile();
-            path =file.getAbsolutePath();
+            setPath(file.getAbsolutePath());
 
             System.out.println("The Path" + file.getPath());
         } else {
             System.out.println("The menu item is no longer selected");
         }
     }};
+
+    public static int getNIL() {
+        return NIL;
+    }
     //-----------------------Getter-------------------------------------------------
 
     public Integer[][] getAdjacencyMatrix2() {
@@ -50,12 +55,12 @@ public class Graph {
         return wegmatrix;
     }
     public String getPath() {
-        if (filelocation == null) {
-            filelocation = "F:\\Schule\\OneDrive - Erudio School of Art\\Desktop\\input_graph1.csv" ;
+        if (getFilelocation() == null) {
+            setFilelocation("F:\\Schule\\OneDrive - Erudio School of Art\\Desktop\\input_graph1.csv");
         } else {
-            filelocation = path;
+            setFilelocation(path);
         }
-        return filelocation;
+        return getFilelocation();
     }
     public String getZentrum() {
         return zentrum;
@@ -82,21 +87,22 @@ public class Graph {
     public void setAdjListArray(ArrayList<ArrayList<Integer>> adjListArray) {
         this.adjListArray = adjListArray;
     }
+
     public Integer[][] readCSVFile() {
         Integer[][] myArray = null;
         System.out.println("....");
         try{   //setup a scanner
-            Scanner scannerIn = new Scanner(new BufferedReader(new FileReader(getPath())));
+            Scanner scannerIn = new Scanner(new BufferedReader(new FileReader("F:\\Schule\\OneDrive - Erudio School of Art\\Desktop\\input_graph1.csv")));
             int j=0;
             while (scannerIn.hasNextLine())
             {
                 // read line in from file
-                inputLine = scannerIn.nextLine().trim();
-                if(inputLine.endsWith(",")) {
-                    inputLine = inputLine.substring(0, inputLine.length()-1);
+                setInputLine(scannerIn.nextLine().trim());
+                if(getInputLine().endsWith(",")) {
+                    setInputLine(getInputLine().substring(0, getInputLine().length()-1));
                 }
                 // split the Inputline into an array at the commas
-                String[] inArray = inputLine.split(",");
+                String[] inArray = getInputLine().split(",");
                 if(myArray == null) {
                     myArray = new Integer[inArray.length][inArray.length];
                 }
@@ -118,26 +124,13 @@ public class Graph {
     }
     public void printGraph() {
         System.out.println("\n------------ Print AdjacencyMatrix ---------------------");
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < getSize(); i++) {
             System.out.println();
-            for (int j = 0; j < size; j++) {
-                System.out.print(AdjacencyMatrix2[i][j]+ " ");
+            for (int j = 0; j < getSize(); j++) {
+                System.out.print(getAdjacencyMatrix2()[i][j]+ " ");
             }
         }
     }
-    /*    public void allesNeuSetzen() {
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                AdjacencyMatrix2[i][j] = 0;
-                wegmatrix[i][j] = 0;
-                distanceMatix[i][j] = -1;
-                if (i == j) {
-                    wegmatrix[i][j] = 1;
-                    distanceMatix[i][j] = 0;
-                }
-            }
-        }
-    }*/
     public void initAll() {
         initialize();
         printGraph();
@@ -150,117 +143,158 @@ public class Graph {
         AP();
         bridge();
     }
+    public void initAll2() {
+        //printGraph();
+        ermittle();
+        multiply();
+        PrintDistanceMatrix();
+        exzentrizitaet();
+        radiusUndDurchmesser();
+        zentrum();
+        komponentenanzahl();
+        AP();
+        bridge();
+    }
     public void initialize() {
         Integer[][] loadedMtrix = readCSVFile();
-        size = loadedMtrix.length;
-        AdjacencyMatrix2 = new Integer[size][size];
-        distanceMatix = new Integer[size][size];
-        wegmatrix = new Integer[size][size];
-        matrixA = new Integer[size][size];
-        exzentrizitaet = new int[size];
-        posUnique = new int [size];
+        setSize(loadedMtrix.length);
+        setAdjacencyMatrix2(new Integer[getSize()][getSize()]);
+        setDistanceMatix(new Integer[getSize()][getSize()]);
+        setWegmatrix(new Integer[getSize()][getSize()]);
+        setMatrixA(new Integer[getSize()][getSize()]);
+        setExzentrizitaet(new int[getSize()]);
+        setPosUnique(new int [getSize()]);
 
-        for (int i = 0; i < size; i++){
-            for (int j = 0; j < size; j++){
-                AdjacencyMatrix2[i][j] =loadedMtrix[i][j];
-                distanceMatix[i][j] =loadedMtrix[i][j];
-                matrixA[i][j] =loadedMtrix[i][j];
+        for (int i = 0; i < getSize(); i++){
+            for (int j = 0; j < getSize(); j++){
+                getAdjacencyMatrix2()[i][j] =loadedMtrix[i][j];
+                getDistanceMatix()[i][j] =loadedMtrix[i][j];
+                getMatrixA()[i][j] =loadedMtrix[i][j];
                 if (i != j){
-                    if (distanceMatix[i][j]==0){
-                        distanceMatix[i][j]= -1;
-                        wegmatrix[i][j] = 0;
+                    if (getDistanceMatix()[i][j]==0){
+                        getDistanceMatix()[i][j]= -1;
+                        getWegmatrix()[i][j] = 0;
                     }
                     else {
-                        wegmatrix[i][j] = 1;
+                        getWegmatrix()[i][j] = 1;
                     }
 
                 }
                 else {
-                    wegmatrix[i][j] = 1;
+                    getWegmatrix()[i][j] = 1;
+                }
+            }
+        }
+    }
+    public void initialize2(JButton[][] loadedMtrix2) {
+
+        setSize(loadedMtrix2.length);
+        setAdjacencyMatrix2(new Integer[getSize()][getSize()]);
+        setDistanceMatix(new Integer[getSize()][getSize()]);
+        setWegmatrix(new Integer[getSize()][getSize()]);
+        setMatrixA(new Integer[getSize()][getSize()]);
+        setExzentrizitaet(new int[getSize()]);
+        setPosUnique(new int [getSize()]);
+        for (int i = 0; i < getSize(); i++){
+            for (int j = 0; j < getSize(); j++){
+                getAdjacencyMatrix2()[i][j] =Integer.parseInt(loadedMtrix2[i][j].getText());
+                getDistanceMatix()[i][j] =Integer.parseInt(loadedMtrix2[i][j].getText());
+                getMatrixA()[i][j] =Integer.parseInt(loadedMtrix2[i][j].getText());
+                if (i != j){
+                    if (getDistanceMatix()[i][j]==0){
+                        getDistanceMatix()[i][j]= -1;
+                        getWegmatrix()[i][j] = 0;
+                    }
+                    else {
+                        getWegmatrix()[i][j] = 1;
+                    }
+                }
+                else {
+                    getWegmatrix()[i][j] = 1;
                 }
             }
         }
     }
     public void ermittle() {
         int anzMultipliziert = 0;
-        while (anzMultipliziert < size) {
+        while (anzMultipliziert < getSize()) {
             Integer[][] multiply = multiply();
             anzMultipliziert++;
-            for (int i = 0; i < size; i++) {
-                for (int j = 0; j < size; j++) {
-                    if (distanceMatix[i][j] < 0 && multiply[i][j] > 0) {
-                        distanceMatix[i][j] = anzMultipliziert + 1;
-                    } else if (wegmatrix[i][j] == 0 && multiply[i][j] > 0) {
-                        wegmatrix[i][j] = 1;
+            for (int i = 0; i < getSize(); i++) {
+                for (int j = 0; j < getSize(); j++) {
+                    if (getDistanceMatix()[i][j] < 0 && multiply[i][j] > 0) {
+                        getDistanceMatix()[i][j] = anzMultipliziert + 1;
+                    } else if (getWegmatrix()[i][j] == 0 && multiply[i][j] > 0) {
+                        getWegmatrix()[i][j] = 1;
                     }
                 }
             }
         }
     }
+
+    public Integer[][] multiply() {
+        Integer multiply[][] = new Integer[getSize()][getSize()];
+        int sum = 0;
+        for (int row = 0; row < getSize(); row++) {
+            for (int col = 0; col < getSize(); col++) {
+                sum =0;
+                for (int index = 0; index < getSize(); index++) {
+                    sum = sum + getMatrixA()[row][index] * getAdjacencyMatrix2()[index][col];
+                }
+                multiply[row][col] = sum;
+            }
+        }
+        for(int i = 0; i < getMatrixA().length; i++){
+            for(int j = 0; j < getMatrixA().length; j++){
+                getMatrixA()[i][j] = multiply[i][j];
+            }
+        }
+        return multiply;
+    }
     public void PrintDistanceMatrix() {
         System.out.println("\n\n------------ Print DistanceMatrix---------------------\n");
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                System.out.print(distanceMatix[i][j] +" ");
+        for (int i = 0; i < getSize(); i++) {
+            for (int j = 0; j < getSize(); j++) {
+                System.out.print(getDistanceMatix()[i][j] +" ");
             }
             System.out.println();
         }
     }
     public void radiusUndDurchmesser(){
-        this.radius = 999;
-        this.durchmesser =0;
-        for (int i = 0; i < exzentrizitaet.length; i++){
-            if (exzentrizitaet[i] < radius && exzentrizitaet[i] > -1 ){
-                radius = exzentrizitaet[i];
-                setRadius(radius);
+        this.setRadius(999);
+        this.setDurchmesser(0);
+        for (int i = 0; i < getExzentrizitaet().length; i++){
+            if (getExzentrizitaet()[i] < getRadius() && getExzentrizitaet()[i] > -1 ){
+                setRadius(getExzentrizitaet()[i]);
+                setRadius(getRadius());
             }
-            if (exzentrizitaet[i] > durchmesser){
-                this.durchmesser = exzentrizitaet[i];
-                setDurchmesser(this.durchmesser);
+            if (getExzentrizitaet()[i] > getDurchmesser()){
+                this.setDurchmesser(getExzentrizitaet()[i]);
+                setDurchmesser(this.getDurchmesser());
             }
         }
         System.out.println("\n------------ Print Radius ---------------------\n");
-        System.out.println("Radius: " +radius);
+        System.out.println("Radius: " + getRadius());
         System.out.println("\n------------ Print Durchmesser ---------------------\n");
-        System.out.println("Durchmesser: " +durchmesser);
-    }
-    public Integer[][] multiply() {
-        Integer multiply[][] = new Integer[size][size];
-        int sum = 0;
-        for (int row = 0; row < size ; row++) {
-            for (int col = 0; col < size ; col++) {
-                sum =0;
-                for (int index = 0; index < size; index++) {
-                    sum = sum + matrixA[row][index] * AdjacencyMatrix2[index][col];
-                }
-                multiply[row][col] = sum;
-            }
-        }
-        for(int i = 0; i < matrixA.length; i++){
-            for(int j = 0; j < matrixA.length; j++){
-                matrixA[i][j] = multiply[i][j];
-            }
-        }
-
-        return multiply;
+        System.out.println("Durchmesser: " + getDurchmesser());
     }
     public String exzentrizitaet(){
         int max = 0;
         String info = "{ ";
-        for (int i = 0; i < distanceMatix.length; i++){
-            for (int j = 0; j < distanceMatix.length; j++){
-                if (max < distanceMatix[i][j]){
-                    max = distanceMatix[i][j];
+        for (int i = 0; i < getDistanceMatix().length; i++){
+            for (int j = 0; j < getDistanceMatix().length; j++){
+                if (max < getDistanceMatix()[i][j]){
+                    max = getDistanceMatix()[i][j];
                 }
             }
-            exzentrizitaet[i] = max;
+            getExzentrizitaet()[i] = max;
             max = 0;
         }
         System.out.println("\n------------ Print Exzentrizitaet---------------------\n");
 
-        for(int i =0; i < exzentrizitaet.length; i++ )
+        for(int i = 0; i < getExzentrizitaet().length; i++ )
         {
-            info += exzentrizitaet[i] + " ";
+            info += getExzentrizitaet()[i] + " ";
 
         }
         info = info+ "} \n";
@@ -270,9 +304,9 @@ public class Graph {
     public String zentrum(){
         String info;
         int zentrum[];
-        zentrum = new int[exzentrizitaet.length];
-        for (int i = 0; i < exzentrizitaet.length; i++){
-            if (exzentrizitaet[i] == this.radius){
+        zentrum = new int[getExzentrizitaet().length];
+        for (int i = 0; i < getExzentrizitaet().length; i++){
+            if (getExzentrizitaet()[i] == this.getRadius()){
                 zentrum[i] = i+1;
             }
         }
@@ -283,7 +317,6 @@ public class Graph {
             }
         }
         info = info + " " + " }";
-
         System.out.println("\n------------ Print Zentrum ---------------------\n");
         System.out.println(info);
         setZentrum( info);
@@ -291,36 +324,36 @@ public class Graph {
     }
     public boolean isZusammenhaengend(){
         int count = 0;
-        for (int i = 0; i < size; i++){
-            for (int j = 0; j < size; j++){
-                if (wegmatrix[i][j]==1){
+        for (int i = 0; i < getSize(); i++){
+            for (int j = 0; j < getSize(); j++){
+                if (getWegmatrix()[i][j]==1){
                     count++;
                 }
             }
         }
-        if (count == size*size){
+        if (count == getSize() * getSize()){
             return true;
         }
         return false;
     }
     public int komponentenanzahl(){
-        int vergleichsArray[] = new int [size];
-        int pos[]= new int [size];
+        int vergleichsArray[] = new int [getSize()];
+        int pos[]= new int [getSize()];
         int count = 0;
         int index = 0;
         //Position ermitteln
-        while (index < size){
+        while (index < getSize()){
             //Zeile in vergleichsArray speichern
-            for (int j = 0; j < size; j++){
-                vergleichsArray[j] = wegmatrix[index][j];
+            for (int j = 0; j < getSize(); j++){
+                vergleichsArray[j] = getWegmatrix()[index][j];
             }
             //Position speichern
-            for (int i = 0; i < size; i++){
+            for (int i = 0; i < getSize(); i++){
                 count = 0;
-                for (int j = 0; j < size; j++){
-                    if (wegmatrix[i][j] == vergleichsArray[j]){
+                for (int j = 0; j < getSize(); j++){
+                    if (getWegmatrix()[i][j] == vergleichsArray[j]){
                         count++;
-                        if (count == size){
+                        if (count == getSize()){
                             pos[index] = i+1;
                         }
                     }
@@ -336,7 +369,7 @@ public class Graph {
         //Für Komponentenbeschreibung //Elemente in setString in posUnique speichern
         int ind = 0;
         for (Iterator<Integer> it = setString.iterator(); it.hasNext(); ) {
-            posUnique[ind] = it.next();
+            getPosUnique()[ind] = it.next();
             ind++;
         }
         //Komponentenanzahl zurückgeben
@@ -347,10 +380,10 @@ public class Graph {
         int komponent = 1;
         for (int i = 0; i < komponentenanzahl(); i++){
             infKompo+= "K"+komponent+" { ";
-            for (int a = 0; a < wegmatrix.length; a++){
-                for (int b = 0; b < wegmatrix.length; b++){
-                    if (posUnique[i]-1 == a){
-                        if (wegmatrix[a][b]==1){
+            for (int a = 0; a < getWegmatrix().length; a++){
+                for (int b = 0; b < getWegmatrix().length; b++){
+                    if (getPosUnique()[i]-1 == a){
+                        if (getWegmatrix()[a][b]==1){
                             infKompo += b+1 + " ";
                         }
                     }
@@ -361,73 +394,6 @@ public class Graph {
         }
         return infKompo;
     }
-    /*    public String bruecken(){
-        String str = "{";
-        int anzBruecken = 0;
-        int anzKompVorher = komponentenanzahl();
-        int anzKompNachher = 0;
-
-        for (int i = 0; i < size-1; i++){
-            for (int j = i; j < size; j++){
-                initialize(); //voriges wegmatrix neu initialisieren
-                if (AdjacencyMatrix2[i][j]==1){
-                    AdjacencyMatrix2[i][j]=0;
-                    AdjacencyMatrix2[j][i]=0;
-                    initialize();
-                    ermittle();
-                    anzKompNachher = komponentenanzahl();
-                    AdjacencyMatrix2[i][j]=1;
-                    AdjacencyMatrix2[j][i]=1;
-                    if (anzKompVorher < anzKompNachher){
-                        str += "[" + (i+1) + "," + (j+1) + "]";
-                        anzBruecken++;
-                    }
-                }
-            }
-        }
-        str += "}";
-        initialize();
-        ermittle();
-        return str + "Anzahl :" + anzBruecken;
-    }*/
-    /* public String artikulation(){
-        Integer[][] adjaKopie = new Integer[size][size];
-        for (int i = 0; i < size; i++){
-            for (int j = 0; j < size; j++){
-                adjaKopie[i][j]= AdjacencyMatrix2[i][j];
-            }
-        }
-        String str = "";
-        str += "{";
-        initialize();
-        ermittle();
-        int anzKompVorher = komponentenanzahl();
-        int anzKompNachher = 0;
-        for (int i = 0; i < size; i++){
-            initialize();
-            for (int j = 0; j < size; j++){
-                AdjacencyMatrix2[i][j]=0;
-                AdjacencyMatrix2[j][i]=0;
-            }
-            initialize();
-            ermittle();
-            anzKompNachher = komponentenanzahl();
-            if (anzKompVorher+1 < anzKompNachher){
-                str += " [" + (i+1) + "] ";
-            }
-            for (int a = 0; a < size; a++){
-                for (int b = 0; b < size; b++){
-                    AdjacencyMatrix2[a][b] =adjaKopie[a][b];
-                }
-            }
-        }
-        str += "}";
-        System.arraycopy(adjaKopie ,0,AdjacencyMatrix2,0,size);
-        initialize();
-        ermittle();
-        return str;
-    }
-*/
     //----------------------ArrayList -----------------------------------------------
     public static ArrayList<ArrayList<Integer>> convert(Integer[][] a) {
         // no of vertices
@@ -468,9 +434,9 @@ public class Graph {
         // Mark the current node as visited
         visited[u] = true;
         // Initialize discovery time and low value
-        disc[u] = low[u] = ++time;
+        disc[u] = low[u] = setTime(getTime() + 1);
         // Go through all vertices aadjacent to this
-        Iterator<Integer> i = adjListArray.get(u).iterator();
+        Iterator<Integer> i = getAdjListArray().get(u).iterator();
         while (i.hasNext())
         {
             int v = i.next();  // v is current adjacent of u
@@ -486,11 +452,11 @@ public class Graph {
                 low[u]  = Math.min(low[u], low[v]);
                 // u is an articulation point in following cases
                 // (1) u is root of DFS tree and has two or more chilren.
-                if (parent[u] == NIL && children > 1)
+                if (parent[u] == getNIL() && children > 1)
                     ap[u] = true;
                 // (2) If u is not root and low value of one of its child
                 // is more than discovery value of u.
-                if (parent[u] != NIL && low[v] >= disc[u])
+                if (parent[u] != getNIL() && low[v] >= disc[u])
                     ap[u] = true;
             }
             // Update low value of u for parent function calls.
@@ -501,42 +467,39 @@ public class Graph {
     // The function to do DFS traversal. It uses recursive function APUtil()
     public void AP() {
         // Mark all the vertices as not visited
-        boolean visited[] = new boolean[size];
-        int disc[] = new int[size];
-        int low[] = new int[size];
-        int parent[] = new int[size];
-        boolean ap[] = new boolean[size]; // To store articulation points
+        boolean visited[] = new boolean[getSize()];
+        int disc[] = new int[getSize()];
+        int low[] = new int[getSize()];
+        int parent[] = new int[getSize()];
+        boolean ap[] = new boolean[getSize()]; // To store articulation points
         // Initialize parent and visited, and ap(articulation point)
         // arrays
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < getSize(); i++)
         {
-            parent[i] = NIL;
+            parent[i] = getNIL();
             visited[i] = false;
             ap[i] = false;
         }
         // Call the recursive helper function to find articulation
         // points in DFS tree rooted with vertex 'i'
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < getSize(); i++)
             if (visited[i] == false)
                 APUtil(i, visited, disc, low, parent, ap);
         // Now ap[] contains articulation points, print them
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < getSize(); i++)
             if (ap[i] == true) {
-                apPrint += i + "  ";
+                setApPrint(getApPrint() + i + "  ");
                 System.out.print(i + " ");
             }
-
-
     }
     //---------------------Bridge------------------------------------
     public void bridgeUtil(int u, boolean visited[], int disc[], int low[], int parent[]) {
-
         // Mark the current node as visited
         visited[u] = true;
         // Initialize discovery time and low value
-        disc[u] = low[u] = ++time;
+        disc[u] = low[u] = setTime(getTime() + 1);
         // Go through all vertices aadjacent to this
-        Iterator<Integer> i = adjListArray.get(u).iterator();
+        Iterator<Integer> i = getAdjListArray().get(u).iterator();
         while (i.hasNext())
         {
             int v = i.next();  // v is current adjacent of u
@@ -554,7 +517,7 @@ public class Graph {
                 // under v is below u in DFS tree, then u-v is
                 // a bridge
                 if (low[v] > disc[u])
-                    bridgePrint+= u+"-"+v +"   ";
+                    setBridgePrint(getBridgePrint() + u+"-"+v +"   ");
                 System.out.println(u+" "+v);
             }
             // Update low value of u for parent function calls.
@@ -566,24 +529,119 @@ public class Graph {
     // function bridgeUtil()
     public void bridge() {
         // Mark all the vertices as not visited
-        boolean visited[] = new boolean[size];
-        int disc[] = new int[size];
-        int low[] = new int[size];
-        int parent[] = new int[size];
+        boolean visited[] = new boolean[getSize()];
+        int disc[] = new int[getSize()];
+        int low[] = new int[getSize()];
+        int parent[] = new int[getSize()];
         // Initialize parent and visited, and ap(articulation point)
         // arrays
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < getSize(); i++)
         {
-            parent[i] = NIL;
+            parent[i] = getNIL();
             visited[i] = false;
         }
         // Call the recursive helper function to find Bridges
         // in DFS tree rooted with vertex 'i'
-        for (int i = 0; i < size; i++)
+        for (int i = 0; i < getSize(); i++)
             if (visited[i] == false) {
                 bridgeUtil(i, visited, disc, low, parent);
             }
     }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setAdjacencyMatrix2(Integer[][] adjacencyMatrix2) {
+        AdjacencyMatrix2 = adjacencyMatrix2;
+    }
+
+    public void setDistanceMatix(Integer[][] distanceMatix) {
+        this.distanceMatix = distanceMatix;
+    }
+
+    public void setWegmatrix(Integer[][] wegmatrix) {
+        this.wegmatrix = wegmatrix;
+    }
+
+    public Integer[][] getMatrixA() {
+        return matrixA;
+    }
+
+    public void setMatrixA(Integer[][] matrixA) {
+        this.matrixA = matrixA;
+    }
+
+    public int[] getExzentrizitaet() {
+        return exzentrizitaet;
+    }
+
+    public void setExzentrizitaet(int[] exzentrizitaet) {
+        this.exzentrizitaet = exzentrizitaet;
+    }
+
+    public int[] getPosUnique() {
+        return posUnique;
+    }
+
+    public void setPosUnique(int[] posUnique) {
+        this.posUnique = posUnique;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public int setTime(int time) {
+        this.time = time;
+        return time;
+    }
+
+    public ArrayList<ArrayList<Integer>> getAdjListArray() {
+        return adjListArray;
+    }
+
+    public String getInputLine() {
+        return inputLine;
+    }
+
+    public void setInputLine(String inputLine) {
+        this.inputLine = inputLine;
+    }
+
+    public String getApPrint() {
+        return apPrint;
+    }
+
+    public void setApPrint(String apPrint) {
+        this.apPrint = apPrint;
+    }
+
+    public String getBridgePrint() {
+        return bridgePrint;
+    }
+
+    public void setBridgePrint(String bridgePrint) {
+        this.bridgePrint = bridgePrint;
+    }
+
+    public String getFilelocation() {
+        return filelocation;
+    }
+
+    public void setFilelocation(String filelocation) {
+        this.filelocation = filelocation;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public JMenuItem getNewMenuItem() {
+        return newMenuItem;
+    }
+
+    public void setNewMenuItem(JMenuItem newMenuItem) {
+        this.newMenuItem = newMenuItem;
+    }
 }
-
-
